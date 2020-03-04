@@ -14,6 +14,13 @@ import java.util.Map;
 
 @Controller
 public class HomeController {
+
+    @Autowired
+    CarRepository carRepository;
+
+    @Autowired
+    CategoryRepository categoryRepository;
+
     @Autowired
     UserRepository userRepository;
 
@@ -24,18 +31,100 @@ public class HomeController {
     CloudinaryConfig cloudc;
 
     @RequestMapping("/")
-    public String index(){
+    public String index(Model model) {
+        model.addAttribute("cars", carRepository.findAll());
+        model.addAttribute("categories", categoryRepository.findAll());
         return "index";
     }
+
+    @RequestMapping("/about")
+    public String about(){
+        return "about";
+    }
+
+    @GetMapping("/addCar")
+    public String carForm(Model model){
+        model.addAttribute("categories", categoryRepository.findAll());
+        model.addAttribute("car", new Car());
+        return "carform";
+    }
+
+    @PostMapping("/processCar")
+    public String processForm(@ModelAttribute Car car){
+        carRepository.save(car);
+        return "redirect:/";
+    }
+
+    @RequestMapping("/detailCar/{id}")
+    public String showCar(@PathVariable("id") long id, Model model){
+        model.addAttribute("car", carRepository.findById(id).get());
+        return "showCar";
+    }
+
+    @RequestMapping("/updateCar/{id}")
+    public String updateCar(@PathVariable("id") long id, Model model){
+        model.addAttribute("car", carRepository.findById(id).get());
+        model.addAttribute("categories", categoryRepository.findAll());
+        return "carform";
+    }
+
+    @RequestMapping("/deleteCar/{id}")
+    public String delCar(@PathVariable("id") long id){
+        carRepository.deleteById(id);
+        return "redirect:/";
+    }
+
+    @GetMapping("/addCategory")
+    public String categoryForm(Model model){
+        model.addAttribute("category", new Category());
+        return "categoryform";
+    }
+
+    @PostMapping("/processCategory")
+    public String processCar(@ModelAttribute Category category,
+                             @RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return "redirect:/addCategory";
+        }
+        try {
+            Map uploadResult = cloudc.upload(file.getBytes(),
+                    ObjectUtils.asMap("resourcetype", "auto"));
+            category.setPhoto(uploadResult.get("url").toString());
+            categoryRepository.save(category);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "redirect:/addCategory";
+        }
+        return "redirect:/";
+    }
+    @RequestMapping("/detailCategory/{id}")
+    public String showCategory(@PathVariable("id") long id, Model model){
+        model.addAttribute("category", categoryRepository.findById(id).get());
+        return "showCategory";
+    }
+
+    @RequestMapping("/updateCategory/{id}")
+    public String updateCategory(@PathVariable("id") long id, Model model){
+        model.addAttribute("category", categoryRepository.findById(id).get());
+        return "categoryform";
+    }
+
+    @RequestMapping("/deleteCategory/{id}")
+    public String delCategory(@PathVariable("id") long id){
+        categoryRepository.deleteById(id);
+        return "redirect:/";
+    }
+
+    @RequestMapping("/search")
+    public String searchPerson(@RequestParam("search") String search, Model model){
+        model.addAttribute("vehiclesSearch", carRepository.findByManufacturer(search));
+        model.addAttribute("categorySearch", categoryRepository.findByCategoryName(search));
+        return "searchList";
+    }
+
     @RequestMapping("/login")
     public String login(){
         return "login";
-    }
-
-    @GetMapping("/add")
-    public String newUser(Model model) {
-        model.addAttribute("user", new User());
-        return "form";
     }
 
    @RequestMapping("/secure")

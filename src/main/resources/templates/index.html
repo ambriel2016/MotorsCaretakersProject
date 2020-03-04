@@ -1,54 +1,94 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
-    <!-- Required meta tags-->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="Colorlib Templates">
-    <meta name="author" content="Colorlib">
-    <meta name="keywords" content="Colorlib Templates">
-
-    <!-- Title Page-->
-    <title>Index</title>
-
-    <!-- Icons font CSS-->
-    <link href="vendor/mdi-font/css/material-design-iconic-font.min.css" rel="stylesheet" media="all">
-    <link href="vendor/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all">
-    <!-- Font special for pages-->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i" rel="stylesheet">
-
-    <!-- Vendor CSS-->
-    <link href="vendor/select2/select2.min.css" rel="stylesheet" media="all">
-    <link href="vendor/datepicker/daterangepicker.css" rel="stylesheet" media="all">
-
-    <!-- Main CSS-->
-    <link href="css/main.css" rel="stylesheet" media="all">
+    <title>Add a Category - Car</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles3.css}">
 </head>
-
-<body style="background: url('http://res.cloudinary.com/di5v2kyqq/image/upload/v1583331511/securityPage_aj2vj6.jpg') no-repeat center center fixed; -webkit-background-size: cover; -moz-background-size: cover; -o-background-size: cover; background-size: cover">
-
-<header class="masthead">
+<body>
+<nav th:replace="base :: navlinks"></nav>
+<header class="masthead"  style="background-image: url('http://res.cloudinary.com/di5v2kyqq/image/upload/v1582900979/car-3189771_1920_yhdnht.jpg')">
     <div class="overlay"></div>
     <div class="container">
         <div class="row">
             <div class="title col-lg-8 col-md-10 mx-auto">
-                <div class="card-body">
-                    <h1 class="card-title" style="text-align:center">Secure Page</h1>
-                    <a href="/secure" class="card-text" style="text-align:center">Secure Page</a>
+                <div class="site-heading">
+                    <h1>Motors Caretakers</h1>
+                    <span class="subheading">Scroll down to see the category and car listings</span>
                 </div>
             </div>
         </div>
     </div>
 </header>
 
-<script src="vendor/jquery/jquery.min.js"></script>
-<!-- Vendor JS-->
-<script src="vendor/select2/select2.min.js"></script>
-<script src="vendor/datepicker/moment.min.js"></script>
-<script src="vendor/datepicker/daterangepicker.js"></script>
+<h1 style="text-align:center">Category Listings</h1>
+<div th:each="category : ${categories}">
+    <h2 th:text="${category.categoryName}"></h2>
+    <div th:each="car : ${category.cars}">
+        <h6 th:inline="text">The Car's manufacturer is [[${car.manufacturer}]]</h6>
+        <h6 th:inline="text">with the model's name is [[${car.model}]]</h6>
+        <h6 th:inline="text">and the year of [[${car.year}]]</h6>
 
-<!-- Main JS-->
-<script src="js/global.js"></script>
+        <ul>
+            <tr>
+                <td sec:authorize="hasAuthority('USER')">
+                    <a th:href="@{/updateCar/{id}(id=${car.id})}">Update</a>
+                    <a th:href="@{/detailCar/{id}(id=${car.id})}">Details</a>
+                    <a th:href="@{/deleteCar/{id}(id=${car.id})}">Delete</a>
+                </td>
+            </tr>
+        </ul>
+    </div>
+
+</div>
+
+<!-- search bar -->
+
+<div class="box">
+    <form th:action="@{/search}" method="post">
+        <input type="text" name="search" placeholder="Please enter the car's manufacturer" required>
+        <input type="submit" value="Submit">
+    </form>
+
+    <!-- another search bar -->
+
+    <select> <!-- add th:field="*{variable}" -->
+        <div id="pet" th:each="car : ${cars}">
+            <option th:value="${car.getId()}" th:text="${car.manufacturer}"></option>
+        </div>
+    </select>
+</div>
+
+<div class="card-columns">
+    <div th:each="category : ${categories}">
+        <div class="card">
+            <div class="card-block">
+                <div th:if="${category.photo} != null">
+                    <img class="img-fluid" th:src="${category.photo}" /><hr />
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title" th:text="${category.categoryName}"></h4>
+                    <p class="card-text" th:text="${category.year}"></p>
+                </div>
+                <div class="card-footer">
+                    <small class="text-muted">Uploaded by:</small><small class="text-muted"  th:text="${category.categoryName}"></small><br>
+                    <a href="">View More</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="footer1">
+    <div class="container">
+        <p class="copyright">Copyright 2020 CRB.</p>
+    </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 </body>
 </html>

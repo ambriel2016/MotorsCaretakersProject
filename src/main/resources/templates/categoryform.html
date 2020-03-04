@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add a Category</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/styles3.css}">
+</head>
+<body>
+<nav th:replace="base :: navlinks"></nav>
+<header class="masthead"  style="background-image: url('http://res.cloudinary.com/di5v2kyqq/image/upload/v1582903961/olia-nayda-KI0_WS7OrmA-unsplash_w1qwih.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+        <div class="row">
+            <div class="title col-lg-8 col-md-10 mx-auto">
+                <div class="site-heading">
+                    <h1>Motors Caretakers</h1>
+                    <span class="subheading">Scroll down to see the categories listings</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="row jumbotron">
+    <div class="col-md-6">
+        <h1>Add a Category</h1>
+        <hr>
+
+        <h1>Category Form</h1>
+
+        <form action="#" th:action="@{/processCategory}" th:object="${category}" enctype="multipart/form-data" method="post">
+            <input type="hidden" th:field="*{id}" />
+            Category Name :<input type="text" placeholder="categoryName" th:field="*{categoryName}" />
+            <span th:if="${#fields.hasErrors('categoryName')}"
+                  th:errors="*{categoryName}"></span><br />
+            Year :<input type="text" placeholder="year" th:field="*{year}" />
+            <span th:if="${#fields.hasErrors('year')}"
+                  th:errors="*{year}"></span><br />
+            photo :<input type="file" name="file"/><br/><br/>
+            <input type="submit" value="Submit" />
+        </form>
+
+    </div>
+    <div class="col-md-6">
+        <img class="img-fluid" src="/category.jpg" alt="category" img align="center">
+    </div>
+</div>
+
+<footer class="footer1">
+    <div class="container">
+        <p class="copyright">Copyright 2020 CRB.</p>
+    </div>
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</body>
+</html>
